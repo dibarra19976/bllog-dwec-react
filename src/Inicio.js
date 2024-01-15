@@ -1,25 +1,47 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import BlogList from "./BlogList";
 
 const Inicio = () => {
+  const [blogs, setBlogs] = useState(null);
+  const [cargando, setCarganddo] = useState(true);
+  //   const handleEliminarBlog = (id) => {
+  //     const nuevoBlog = blogs.filter((blog) => blog.id !== id);
+  //     setBlogs(nuevoBlog);
+  //   };
 
-    const [blogs, setBlogs] = useState([
-        {titulo: "Mi Nueva web", body: "texto a mostar....", autor: "jonesy fortnite", id: 1},
-        {titulo: "Yeah Perdonen", body: "Kamehameha, despues del tema del tetris viene l dragon ball rap", autor: "Porta", id: 2},
-        {titulo: "Mi Nueva web 2: ahora Es Personal", body: "texto a mostarkjdgkbhjasgdhas....", autor: "freddy fivebear", id: 3}
-    ])
-    return ( 
-        <div className="home">
-            { blogs.map((blog)=>{
-                return (
-                <div className="blog-preview" key={ blog.id }>
-                    <h2>{ blog.titulo} </h2>
-                    <p>Escrito por <span className="author">{ blog.autor }</span></p>
-                    <p>{ blog.body }</p>
-                </div>
-                );
-            }) }
-        </div>
-     );
-}
- 
+  useEffect(() => {
+    console.log("useEffect en marcha");
+    setTimeout(() => {
+      fetch(`http://localhost:8000/blogs`)
+        .then((res) => {
+          return res.json();
+        })
+        .then((datos) => {
+          // console.log(datos);
+          setBlogs(datos);
+          setCarganddo(false);
+        })
+        .catch(err => {
+            console.log(err.message);
+        })
+    }, 1000);
+  }, []);
+
+  return (
+    <div className="home">
+      {cargando && <div>Cargando...</div>}
+      {blogs && (
+        <BlogList
+          blogs={blogs}
+          titulo="Listado de Blogs"
+          // handleEliminarBlog={handleEliminarBlog}
+        />
+      )}
+      {/* <BlogList blogs = {blogs.filter(blog => blog.autor === "Dani")} titulo = "Blogs de Dani" /> */}
+    </div>
+  );
+};
+
 export default Inicio;
+
+// useEffect
